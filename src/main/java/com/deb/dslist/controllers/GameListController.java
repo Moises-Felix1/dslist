@@ -43,4 +43,10 @@ public class GameListController {
 	public void move(@PathVariable Long listId, @RequestBody ReplacementDTO body){
 		gameListService.move(listId, body.getSourceIndex(), body.getTargetIndex());
 	}
+	
+	@PostMapping
+	public List<GameListDTO> insert(@RequestBody GameListDTO gameListDto) {
+		gameListService.insertList(gameListDto);
+		return findAll();
+	}
 }

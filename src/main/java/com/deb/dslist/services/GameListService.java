@@ -2,6 +2,7 @@ package com.deb.dslist.services;
 
 import java.util.List;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,4 +41,12 @@ public class GameListService {
 			gameListRepository.updateBelongingPosition(listId, list.get(i).getId(), i);
 		}
 	}
+	
+	@Transactional
+	public void insertList(GameListDTO gameListdto) {
+		var newlist = new GameList();
+		BeanUtils.copyProperties(gameListdto, newlist);
+		gameListRepository.save(newlist);
+	}
+	
 }

@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.deb.dslist.dto.GameDTO;
 import com.deb.dslist.dto.GameMinDTO;
 import com.deb.dslist.services.GameService;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @RestController
 @RequestMapping(value = "/games")
@@ -29,6 +32,12 @@ public class GameController {
 	public List<GameMinDTO> findAll(){
 		var result = gameService.findAll();
 		return result;
+	}
+	
+	@PostMapping
+	public List<GameMinDTO> insertGame(@RequestBody GameDTO gameDto){
+		gameService.insertGames(gameDto);
+		return findAll();
 	}
 	
 }
