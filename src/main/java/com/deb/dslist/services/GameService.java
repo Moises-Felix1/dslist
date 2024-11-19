@@ -37,7 +37,7 @@ public class GameService {
 		return result.stream().map(x -> new GameMinDTO(x)).toList();
 	}
 	
-	@Transactional
+	@Transactional(readOnly = true)
 	public void insertGames(GameDTO gamedto) {
 		Game game = new Game();
 		BeanUtils.copyProperties(gamedto, game);

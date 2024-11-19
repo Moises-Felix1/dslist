@@ -1,6 +1,7 @@
 package com.deb.dslist.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,13 @@ public class GameListService {
 	}
 	
 	@Transactional
+	public GameListDTO findByIdList(Long listId){
+		Optional<GameList> found = gameListRepository.findById(listId);
+		GameList obj = found.get();
+		return new GameListDTO(obj);
+	}
+	
+	@Transactional
 	public void move(Long listId, int sourceIndex, int targetIndex ) {
 		List<GameMinProjection> list = gameRepository.searchByList(listId);
 		GameMinProjection obj = list.remove(sourceIndex);
@@ -42,11 +50,15 @@ public class GameListService {
 		}
 	}
 	
-	@Transactional
+	@Transactional(readOnly = true)
 	public void insertList(GameListDTO gameListdto) {
 		var newlist = new GameList();
 		BeanUtils.copyProperties(gameListdto, newlist);
 		gameListRepository.save(newlist);
 	}
 	
+	@Transactional
+	public void deleteList(Long listId) {
+		gameListRepository.deleteById(listId);
+	}
 }

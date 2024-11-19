@@ -1,8 +1,11 @@
 package com.deb.dslist.controllers;
 
 import java.util.List;
+import java.util.Optional;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.deb.dslist.dto.GameListDTO;
 import com.deb.dslist.dto.GameMinDTO;
 import com.deb.dslist.dto.ReplacementDTO;
+import com.deb.dslist.entities.GameList;
 import com.deb.dslist.services.GameListService;
 import com.deb.dslist.services.GameService;
 
@@ -32,6 +36,12 @@ public class GameListController {
 		var result = gameListService.findAll();
 		return result;
 	}
+	
+	@GetMapping(value = "/{listId}")
+	public GameListDTO findByIdList(@PathVariable Long listId){
+		GameListDTO re = gameListService.findByIdList(listId);
+		return re;
+	}
 
 	@GetMapping(value = "/{listId}/games")
 	public List<GameMinDTO> findByList(@PathVariable Long listId){
@@ -48,5 +58,10 @@ public class GameListController {
 	public List<GameListDTO> insert(@RequestBody GameListDTO gameListDto) {
 		gameListService.insertList(gameListDto);
 		return findAll();
+	}
+	
+	@DeleteMapping(value = "/{listId}")
+	public void deleteList(@PathVariable Long listId) {
+		gameListService.deleteList(listId);
 	}
 }
