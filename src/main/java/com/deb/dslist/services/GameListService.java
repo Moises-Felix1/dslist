@@ -13,6 +13,7 @@ import com.deb.dslist.entities.GameList;
 import com.deb.dslist.projections.GameMinProjection;
 import com.deb.dslist.repositories.GameListRepository;
 import com.deb.dslist.repositories.GameRepository;
+import com.deb.dslist.services.exceptions.ObjectNotFoundException;
 
 @Service
 public class GameListService {
@@ -30,10 +31,9 @@ public class GameListService {
 	}
 	
 	@Transactional
-	public GameListDTO findByIdList(Long listId){
+	public GameList findByIdList(Long listId){
 		Optional<GameList> found = gameListRepository.findById(listId);
-		GameList obj = found.get();
-		return new GameListDTO(obj);
+		return found.orElseThrow(() -> new ObjectNotFoundException(listId));
 	}
 	
 	@Transactional

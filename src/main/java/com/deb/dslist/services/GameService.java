@@ -1,6 +1,7 @@
 package com.deb.dslist.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,9 @@ import com.deb.dslist.dto.GameDTO;
 import com.deb.dslist.dto.GameMinDTO;
 import com.deb.dslist.entities.Game;
 import com.deb.dslist.projections.GameMinProjection;
+import com.deb.dslist.repositories.GameListRepository;
 import com.deb.dslist.repositories.GameRepository;
+import com.deb.dslist.services.exceptions.ObjectNotFoundException;
 
 @Service
 public class GameService {
@@ -20,9 +23,9 @@ public class GameService {
 	private GameRepository gameRepository;
 	
 	@Transactional(readOnly = true)
-	public GameDTO findById(Long id) {
-		Game result = gameRepository.findById(id).get();
-		return new GameDTO(result);
+	public Game findById(Long id) {
+		Optional<Game> result = gameRepository.findById(id);
+		return result.orElseThrow(() -> new ObjectNotFoundException(id));
 	}
 	
 	@Transactional(readOnly = true)
@@ -43,4 +46,10 @@ public class GameService {
 		BeanUtils.copyProperties(gamedto, game);
 		gameRepository.save(game);
 	}
+	
+	@Transactional
+	public void deleteGame(Long id) {
+		gameRepository.deleteById(id);
+	}
+	
 }
