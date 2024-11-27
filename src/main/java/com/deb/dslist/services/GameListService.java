@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +14,7 @@ import com.deb.dslist.entities.GameList;
 import com.deb.dslist.projections.GameMinProjection;
 import com.deb.dslist.repositories.GameListRepository;
 import com.deb.dslist.repositories.GameRepository;
+import com.deb.dslist.services.exceptions.DataBasesException;
 import com.deb.dslist.services.exceptions.ObjectNotFoundException;
 
 @Service
@@ -57,8 +59,14 @@ public class GameListService {
 		gameListRepository.save(newlist);
 	}
 	
-	@Transactional
+	//@Transactional
 	public void deleteList(Long listId) {
-		gameListRepository.deleteById(listId);
+		if(!gameListRepository.existsById(listId)) 
+			throw new ObjectNotFoundException(listId);
+		try {
+			gameListRepository.deleteById(listId);
+		} catch (DataIntegrityViolationException e) {
+			throw new DataBasesException(e.getMessage());
+		}
 	}
 }
