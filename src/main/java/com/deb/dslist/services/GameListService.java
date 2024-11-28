@@ -52,7 +52,7 @@ public class GameListService {
 		}
 	}
 	
-	@Transactional(readOnly = true)
+	//@Transactional(readOnly = true)
 	public void insertList(GameListDTO gameListdto) {
 		var newlist = new GameList();
 		BeanUtils.copyProperties(gameListdto, newlist);
@@ -68,5 +68,16 @@ public class GameListService {
 		} catch (DataIntegrityViolationException e) {
 			throw new DataBasesException(e.getMessage());
 		}
+	}
+	
+	@Transactional
+	public void updateGame(Long listId, GameListDTO ListDto) {
+		GameList gamelist = gameListRepository.getReferenceById(listId);
+		update(gamelist, ListDto);
+		gameListRepository.save(gamelist);
+	}
+
+	private void update(GameList list, GameListDTO ListDto) {
+		list.setName(ListDto.getName());
 	}
 }

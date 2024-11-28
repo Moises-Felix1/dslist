@@ -1,5 +1,6 @@
 package com.deb.dslist.controllers;
 
+import java.net.URI;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,9 +9,11 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.deb.dslist.dto.GameListDTO;
 import com.deb.dslist.dto.GameMinDTO;
@@ -56,14 +59,21 @@ public class GameListController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<List<GameListDTO>> insert(@RequestBody GameListDTO gameListDto) {
+	public ResponseEntity<GameListDTO> insertList(@RequestBody GameListDTO gameListDto) {
 		gameListService.insertList(gameListDto);
-		return findAll();
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(gameListDto.getId()).toUri();
+		return ResponseEntity.created(uri).body(gameListDto);
 	}
 	
 	@DeleteMapping(value = "/{listId}")
 	public ResponseEntity<Void> deleteList(@PathVariable Long listId) {
 		gameListService.deleteList(listId);
 		return ResponseEntity.noContent().build();
+	}
+	
+	@PutMapping(value = "/{listId}")
+	public ResponseEntity<GameListDTO> updateGame(@PathVariable Long listId, @RequestBody GameListDTO gameListDto){
+		gameListService.updateGame(listId, gameListDto);
+		return ResponseEntity.ok().body(findByIdList(listId).getBody());
 	}
 }

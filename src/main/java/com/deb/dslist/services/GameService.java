@@ -1,7 +1,6 @@
 package com.deb.dslist.services;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +23,11 @@ public class GameService {
 	private GameRepository gameRepository;
 	
 	@Transactional(readOnly = true)
-	public Game findById(Long id) {
-		Optional<Game> result = gameRepository.findById(id);
-		return result.orElseThrow(() -> new ObjectNotFoundException(id));
+	public GameDTO findById(Long id) {
+		if(!gameRepository.existsById(id))
+			throw new ObjectNotFoundException(id);
+		Game result = gameRepository.findById(id).get();
+		return new GameDTO(result);
 	}
 	
 	@Transactional(readOnly = true)
@@ -42,10 +43,11 @@ public class GameService {
 	}
 	
 	@Transactional(readOnly = true)
-	public void insertGames(GameDTO gamedto) {
+	public GameDTO insertGames(GameDTO gamedto) {
 		Game game = new Game();
 		BeanUtils.copyProperties(gamedto, game);
 		gameRepository.save(game);
+		return gamedto;
 	}
 	
 	//@Transactional(readOnly = true)
@@ -57,6 +59,19 @@ public class GameService {
 		}catch(DataIntegrityViolationException e) {
 			throw new DataBasesException(e.getMessage());
 		}
+	}
+	
+	@Transactional
+	public void updateGame(Long id, GameDTO gameDto) {
+		Game game = gameRepository.getReferenceById(id);
+		update(game, gameDto);
+		gameRepository.save(game);
+	}
+
+	private void update(Game game, GameDTO gameDto) {
+		game.setPlatforms(gameDto.getPlatforms());
+		game.setScore(gameDto.getScore());
+		game.setImgUrl(gameDto.getImgUrl());
 	}
 	
 }
