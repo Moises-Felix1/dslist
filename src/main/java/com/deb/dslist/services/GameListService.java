@@ -17,6 +17,8 @@ import com.deb.dslist.repositories.GameRepository;
 import com.deb.dslist.services.exceptions.DataBasesException;
 import com.deb.dslist.services.exceptions.ObjectNotFoundException;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @Service
 public class GameListService {
 
@@ -72,9 +74,13 @@ public class GameListService {
 	
 	@Transactional
 	public void updateGame(Long listId, GameListDTO ListDto) {
-		GameList gamelist = gameListRepository.getReferenceById(listId);
-		update(gamelist, ListDto);
-		gameListRepository.save(gamelist);
+		try {
+			GameList gamelist = gameListRepository.getReferenceById(listId);
+			update(gamelist, ListDto);
+			gameListRepository.save(gamelist);
+		}catch(EntityNotFoundException e) {
+			throw new ObjectNotFoundException(listId);
+		}
 	}
 
 	private void update(GameList list, GameListDTO ListDto) {
