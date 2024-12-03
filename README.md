@@ -24,6 +24,7 @@ Movendo o cuphead da final da lista para o começo
 - JPA / Hibernate
 - Maven
 - Banco de dados: Postgresql / H2
+- Postman
 # Autor
 
 Moisés Felix da Silva
